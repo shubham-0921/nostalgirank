@@ -8,7 +8,7 @@ export const cartoonShows = [
     years: "1996-2003",
     image: "🧪",
     viewershipRank: 3,
-    description: "A boy genius with a secret laboratory"
+    description: "A boy genius conducts secret experiments in his hidden laboratory while dealing with his annoying sister Dee Dee's constant interruptions."
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ export const cartoonShows = [
     years: "1998-2005",
     image: "💖",
     viewershipRank: 2,
-    description: "Sugar, spice, and everything nice"
+    description: "Three kindergarten-aged superhero sisters created from sugar, spice, and Chemical X protect Townsville from villains and monsters."
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ export const cartoonShows = [
     years: "1997-2004",
     image: "💪",
     viewershipRank: 8,
-    description: "A muscular mama's boy with big hair"
+    description: "A muscular, Elvis-loving mama's boy with an oversized ego constantly strikes out with women despite his best pickup lines."
   },
   {
     id: 4,
@@ -32,7 +32,7 @@ export const cartoonShows = [
     years: "1999-2009",
     image: "🍬",
     viewershipRank: 1,
-    description: "Three friends on endless jawbreaker quests"
+    description: "Three misfit friends scheme to earn money for jawbreakers through increasingly elaborate scams on their cul-de-sac neighbors."
   },
   {
     id: 5,
@@ -40,7 +40,7 @@ export const cartoonShows = [
     years: "1999-2002",
     image: "🐕",
     viewershipRank: 5,
-    description: "A frightened dog protecting his owners"
+    description: "A cowardly pink dog must overcome his fears to protect his elderly owners from paranormal threats in the middle of Nowhere, Kansas."
   },
   {
     id: 6,
@@ -48,7 +48,7 @@ export const cartoonShows = [
     years: "2001-2004, 2017",
     image: "⚔️",
     viewershipRank: 7,
-    description: "A warrior fighting through time"
+    description: "A samurai warrior battles to return to the past and defeat the shape-shifting demon Aku after being thrown into a dystopian future."
   },
   {
     id: 7,
@@ -56,7 +56,7 @@ export const cartoonShows = [
     years: "2003-2006",
     image: "🦸",
     viewershipRank: 4,
-    description: "Young DC heroes saving the world"
+    description: "Five young DC superheroes led by Robin form a team to fight crime and navigate the challenges of adolescence in their tower headquarters."
   },
   {
     id: 8,
@@ -64,7 +64,7 @@ export const cartoonShows = [
     years: "2010-2018",
     image: "🗡️",
     viewershipRank: 6,
-    description: "Mathematical adventures in the Land of Ooo"
+    description: "Finn the human and Jake the magical dog embark on surreal adventures through the post-apocalyptic Land of Ooo filled with bizarre characters."
   },
   {
     id: 9,
@@ -72,7 +72,7 @@ export const cartoonShows = [
     years: "2010-2017",
     image: "🦝",
     viewershipRank: 9,
-    description: "A blue jay and raccoon's surreal park job"
+    description: "A blue jay and raccoon working as park groundskeepers face supernatural and absurd situations that escalate from their attempts to slack off."
   },
   {
     id: 10,
@@ -80,7 +80,7 @@ export const cartoonShows = [
     years: "2013-2019",
     image: "💎",
     viewershipRank: 10,
-    description: "A boy protecting Earth with the Crystal Gems"
+    description: "A half-human, half-Gem boy learns to use his powers while protecting Earth alongside the Crystal Gems and exploring themes of identity and love."
   }
 ];
 
