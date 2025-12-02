@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getRandomPrompts } from '../data/prompts';
 
 const PromptInput = ({ onGenerate, onJoinRoom }) => {
   const [prompt, setPrompt] = useState('');
@@ -6,16 +7,12 @@ const PromptInput = ({ onGenerate, onJoinRoom }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [mode, setMode] = useState(null); // null, 'solo', 'multiplayer'
 
-  const suggestedPrompts = [
-    { emoji: '🎬', text: 'Best Pixar movies', category: 'Movies' },
-    { emoji: '🎵', text: 'Taylor Swift albums', category: 'Music' },
-    { emoji: '🍕', text: 'Pizza toppings', category: 'Food' },
-    { emoji: '🏎️', text: 'Italian sports cars', category: 'Cars' },
-    { emoji: '🎮', text: 'Nintendo Switch games', category: 'Games' },
-    { emoji: '📺', text: 'Classic sitcoms from the 90s', category: 'TV Shows' },
-    { emoji: '☕', text: 'Coffee drinks at Starbucks', category: 'Beverages' },
-    { emoji: '🦸', text: 'Marvel Cinematic Universe movies', category: 'Superheroes' },
-  ];
+  // Generate random prompts on component mount (useMemo ensures it only runs once per render)
+  const [suggestedPrompts, setSuggestedPrompts] = useState(() => getRandomPrompts(8));
+
+  const refreshPrompts = () => {
+    setSuggestedPrompts(getRandomPrompts(8));
+  };
 
   const handleSubmit = async (e, gameMode) => {
     e.preventDefault();
@@ -202,9 +199,29 @@ const PromptInput = ({ onGenerate, onJoinRoom }) => {
         </form>
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            Or try one of these:
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-700">
+              Or try one of these:
+            </h3>
+            <button
+              onClick={refreshPrompts}
+              disabled={isGenerating}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-gray-200
+                text-sm font-medium transition-all duration-200
+                ${isGenerating
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:border-purple-400 hover:bg-purple-50 text-gray-700 hover:text-purple-600'
+                }
+              `}
+              title="Get new random suggestions"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {suggestedPrompts.map((suggestion, index) => (
               <button
