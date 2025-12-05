@@ -145,3 +145,37 @@ export const getPlayerCount = (roomData) => {
 export const getSubmittedCount = (roomData) => {
   return Object.values(roomData.players || {}).filter(p => p.submitted).length;
 };
+
+// Restart room with new prompt and items while keeping all players
+export const restartRoom = async (roomCode, prompt, itemCount, items) => {
+  const roomRef = ref(database, `rooms/${roomCode}`);
+  const snapshot = await get(roomRef);
+
+  if (!snapshot.exists()) {
+    throw new Error('Room not found');
+  }
+
+  const currentRoomData = snapshot.val();
+
+  // Reset all players' ranking and submitted status
+  const resetPlayers = {};
+  Object.entries(currentRoomData.players).forEach(([playerId, playerData]) => {
+    resetPlayers[playerId] = {
+      ...playerData,
+      ranking: null,
+      submitted: false
+    };
+  });
+
+  // Update room with new prompt and items, reset status
+  await update(roomRef, {
+    prompt,
+    itemCount,
+    items,
+    status: 'lobby', // Set to lobby instead of waiting
+    players: resetPlayers,
+    restartedAt: Date.now()
+  });
+
+  return { success: true };
+};

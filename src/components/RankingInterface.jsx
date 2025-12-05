@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -15,9 +15,42 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { SortableItem } from './SortableItem';
+import { listenToRoom } from '../utils/roomManager';
 
-const RankingInterface = ({ shows, onSubmit, onBack, prompt }) => {
+const RankingInterface = ({ shows, onSubmit, onBack, prompt, isMultiplayer, roomCode, onRoomRestarted }) => {
   const [items, setItems] = useState(shows);
+  const initialRestartedAtRef = useRef(null);
+  const hasNotifiedRestartRef = useRef(false);
+
+  useEffect(() => {
+    if (isMultiplayer && roomCode) {
+      hasNotifiedRestartRef.current = false;
+
+      // Listen for room updates to detect restart
+      const unsubscribe = listenToRoom(roomCode, (data) => {
+        // Store initial restartedAt on first load
+        if (initialRestartedAtRef.current === null) {
+          initialRestartedAtRef.current = data.restartedAt || null;
+        }
+
+        // Check if room was restarted
+        // Allow transition if: restartedAt exists AND it's different from what we saw initially
+        if (data.restartedAt &&
+            data.restartedAt !== initialRestartedAtRef.current &&
+            !hasNotifiedRestartRef.current) {
+          // Room has been restarted, notify parent once
+          hasNotifiedRestartRef.current = true;
+          if (onRoomRestarted) {
+            onRoomRestarted(data);
+          }
+          // Update the initial timestamp so we don't keep detecting the same restart
+          initialRestartedAtRef.current = data.restartedAt;
+        }
+      });
+
+      return () => unsubscribe();
+    }
+  }, [isMultiplayer, roomCode, onRoomRestarted]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {

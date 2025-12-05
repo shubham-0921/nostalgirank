@@ -7,7 +7,7 @@ import RankingInterface from './components/RankingInterface';
 import WaitingRoom from './components/WaitingRoom';
 import Results from './components/Results';
 import { shuffleArray } from './data/shows';
-import { createRoom, joinRoom, submitRanking } from './utils/roomManager';
+import { createRoom, joinRoom, submitRanking, restartRoom } from './utils/roomManager';
 
 function App() {
   const [gameState, setGameState] = useState('prompt'); // 'prompt', 'joinRoom', 'loading', 'lobby', 'ranking', 'waiting', 'results'
@@ -113,6 +113,65 @@ function App() {
     setRoomData(null);
   };
 
+  const handleNewGame = async (prompt, itemCount = 6) => {
+    setCurrentPrompt(prompt);
+    setGameState('loading');
+
+    try {
+      const response = await fetch('/api/generate-game', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt, itemCount }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate game');
+      }
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const items = result.data;
+
+        if (gameMode === 'multiplayer' && roomCode) {
+          // Restart the existing room with new items
+          await restartRoom(roomCode, prompt, itemCount, items);
+          setRoomData({ prompt, items, itemCount, players: {} });
+          setShuffledShows(shuffleArray(items));
+          setUserRanking([]); // Reset user ranking
+          setGameState('lobby');
+        } else {
+          // Solo mode - go straight to ranking
+          setShuffledShows(shuffleArray(items));
+          setUserRanking([]); // Reset user ranking
+          setGameState('ranking');
+        }
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (error) {
+      console.error('Error generating new game:', error);
+      throw error; // Re-throw so Results component can show the error
+    }
+  };
+
+  const handleRoomRestarted = (roomData) => {
+    // When room is restarted, update local state and transition to lobby
+    console.log('[App] handleRoomRestarted called with:', {
+      prompt: roomData.prompt,
+      itemCount: roomData.itemCount,
+      restartedAt: roomData.restartedAt,
+      currentGameState: gameState
+    });
+    setCurrentPrompt(roomData.prompt);
+    setRoomData(roomData);
+    setShuffledShows(shuffleArray(roomData.items));
+    setUserRanking([]); // Reset user ranking
+    setGameState('lobby');
+  };
+
   const handleBackToPrompt = () => {
     setGameState('prompt');
   };
@@ -148,6 +207,7 @@ function App() {
           prompt={currentPrompt}
           isMultiplayer={gameMode === 'multiplayer'}
           roomCode={roomCode}
+          onRoomRestarted={handleRoomRestarted}
         />
       )}
       {gameState === 'waiting' && (
@@ -161,6 +221,8 @@ function App() {
         <Results
           userRanking={userRanking}
           onPlayAgain={handlePlayAgain}
+          onNewGame={handleNewGame}
+          onRoomRestarted={handleRoomRestarted}
           prompt={currentPrompt}
           isMultiplayer={gameMode === 'multiplayer'}
           roomCode={roomCode}
